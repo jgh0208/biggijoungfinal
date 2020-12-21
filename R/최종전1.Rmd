@@ -1,0 +1,557 @@
+---
+title: ''
+author: "3 the"
+date: "2018년 6월 7일"
+output: word_document
+---
+## 서론 
+
+2016년 기준, 교통사고 건수는 감소하는 추세이지만 교통사고 사망자 수는 여전히 연간 4천명대를 유지하고 있습니다. 정부는 2017년 사망자 수를 3천명대로 낮출 것이라 예상했지만 2017년에도 마찬가지로 4185명을 기록했습니다. 교통사고는 부상, 사망을 이끌 뿐만 아니라 가벼운 경상일지라도 후유증을 남깁니다. 2016년 기준으로 어린이 사망 사고 중 가장 많은 비율을 차지하는 것 또한 교통사고입니다. 정부에선 국민의 안전을 위해 교통사고를 예방할 수 있는 새로운 방안을 모색해야합니다.
+도로 형태별 특징과 날씨 요소들은 차량 운전에 많은 영향을 미칩니다. 따라서 도로형태별, 계절별로 어떠한 계절에 어떠한 도로에서 가장 사고가 많이 나는지 분석하고 그에 맞는 해결방안을 제안하고자 합니다. 
+
+
+
+##자료값 불러오기
+####2016년 도로형태별 발생건수자료
+```{r, echo = FALSE}
+(CA <- read.csv("C:/Users/7533/Desktop/20173250/2016.csv"))
+```
+####2015년 도로형태별 발생건수자료
+```{r, echo = FALSE}
+(RS <- read.csv("C:/Users/7533/Desktop/20173250/2015.csv"))
+```
+####2014년 도로형태별 발생건수자료
+```{r, echo = FALSE}
+(BA <- read.csv("C:/Users/7533/Desktop/20173250/2014.csv"))
+```
+####2013년 도로형태별 발생건수자료
+```{r, echo = FALSE}
+(ZA <- read.csv("C:/Users/7533/Desktop/20173250/2013.csv"))
+```
+####2013년 도로형태별 사망자수자료
+```{r, echo = FALSE}
+(di13 <- read.csv("C:/Users/7533/Desktop/rudgus/2013DD.csv")) 
+```
+####2014년 도로형태별 사망자수자료
+```{r, echo = FALSE}
+(di14 <- read.csv("C:/Users/7533/Desktop/rudgus/2014DD.csv"))
+```
+####2015년 도로형태별 사망자수자료
+```{r, echo = FALSE}
+(di15 <- read.csv("C:/Users/7533/Desktop/rudgus/2015DD.csv"))
+```
+####2016년 도로형태별 사망자수자료
+```{r, echo = FALSE}
+(di16 <- read.csv("C:/Users/7533/Desktop/rudgus/2016DD.csv"))
+```
+
+
+## 본론
+
+먼저 도로형태별 월별 교통사고 2013년~2016년도 자료를 찾아 발생건수와 사망자수를 추출하였습니다. 그리고 자료가 나와 있지 않은 도로형태는 제외하고 자료를 연도별로 정리하였습니다. 그리고 이 자료를 계절별로 나타내기 위해 봄(3,4,5월), 여름(6,7,8월), 가을(9,10,11월), 겨울(1,2,12월)로 묶어 자료를 수정하였습니다. 
+
+
+```{r, echo=FALSE}
+CA <- read.csv("C:/Users/7533/Desktop/20173250/2016.csv")
+RS <- read.csv("C:/Users/7533/Desktop/20173250/2015.csv")
+BA <- read.csv("C:/Users/7533/Desktop/20173250/2014.csv")
+ZA <- read.csv("C:/Users/7533/Desktop/20173250/2013.csv")
+di13 <- read.csv("C:/Users/7533/Desktop/rudgus/2013DD.csv") 
+di14 <- read.csv("C:/Users/7533/Desktop/rudgus/2014DD.csv")
+di15 <- read.csv("C:/Users/7533/Desktop/rudgus/2015DD.csv")
+di16 <- read.csv("C:/Users/7533/Desktop/rudgus/2016DD.csv")
+A1 <- CA$단일로.터널안
+A2 <- CA$단일로.횡단보도상
+A3 <- CA$단일로.횡단보도부근
+A4 <- CA$단일로.교량위
+A5 <- CA$단일로.고가도로위
+A6 <- CA$단일로.지하차도.도로.내
+A8 <- CA$교차로내
+A9 <- CA$교차로부근
+
+
+X1 <- RS$단일로.터널안
+X2 <- RS$단일로.횡단보도상
+X3 <- RS$단일로.횡단보도부근
+X4 <- RS$단일로.교량위
+X5 <- RS$단일로.고가도로위
+X6 <- RS$단일로.지하차도.도로.내
+X8 <- RS$교차로내
+X9 <- RS$교차로부근
+
+
+B1 <- BA$단일로.터널안
+B2 <- BA$단일로.횡단보도상
+B3 <- BA$단일로.횡단보도부근
+B4 <- BA$단일로.교량위
+B5 <- BA$단일로.고가도로위
+B6 <- BA$단일로.지하차도.도로.내
+B8 <- BA$교차로내
+B9 <- BA$교차로부근
+
+
+Z1 <- ZA$단일로.터널안
+Z2 <- ZA$단일로.횡단보도상
+Z3 <- ZA$단일로.횡단보도부근
+Z4 <- ZA$단일로.교량위
+Z5 <- ZA$단일로.고가도로위
+Z6 <- ZA$단일로.지하차도.도로.내
+Z8 <- ZA$교차로내
+Z9 <- ZA$교차로부근
+
+
+D1 <- di13$단일로.터널안
+D2 <- di13$단일로.횡단보도상
+D3 <- di13$단일로.횡단보도부근
+D4 <- di13$단일로.교량위
+D5 <- di13$단일로.고가도로위
+D6 <- di13$단일로.지하차도.도로.내
+D8 <- di13$교차로내
+D9 <- di13$교차로부근
+
+
+F1 <- di14$단일로.터널안
+F2 <- di14$단일로.횡단보도상
+F3 <- di14$단일로.횡단보도부근
+F4 <- di14$단일로.교량위
+F5 <- di14$단일로.고가도로위
+F6 <- di14$단일로.지하차도.도로.내
+F8 <- di14$교차로내
+F9 <- di14$교차로부근
+
+
+G1 <- di15$단일로.터널안
+G2 <- di15$단일로.횡단보도상
+G3 <- di15$단일로.횡단보도부근
+G4 <- di15$단일로.교량위
+G5 <- di15$단일로.고가도로위
+G6 <- di15$단일로.지하차도.도로.내
+G8 <- di15$교차로내
+G9 <- di15$교차로부근
+
+
+H1 <- di16$단일로.터널안
+H2 <- di16$단일로.횡단보도상
+H3 <- di16$단일로.횡단보도부근
+H4 <- di16$단일로.교량위
+H5 <- di16$단일로.고가도로위
+H6 <- di16$단일로.지하차도.도로.내
+H8 <- di16$교차로내
+H9 <- di16$교차로부근
+
+
+Y<- RS$도로형태세분류
+season <- factor(Y,levels = c("봄","여름","가을","겨울"))
+```
+
+
+###계절별 단일로 터널안 사고 발생건수,사망자수 그래프
+```{r, echo=FALSE}
+{plot(c(1:4), Z1,type = "l", xlim = c(0.5,4.5),ylim = c(100,200),lwd = "2", axes = F, ann = F)
+axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+axis(2, ylim = c(0,2000))
+title('계절별 단일로 터널안 사고발생건수',font.main = 2)
+legend("topright", 
+       legend = c("2013년", "2014년","2015년","2016년"), 
+       col = c("1","red","blue","#006600"), 
+       pch = c(16), 
+       bty = "o", 
+       pt.cex = 1, 
+       cex = 0.8, 
+       text.col = "black", 
+       horiz = F)
+}
+par(new = T)
+plot(c(1:4), B1,type = "l",col = "red", xlim = c(0.5,4.5),ylim = c(100,200),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), X1,type = "l",col = "blue", xlim = c(0.5,4.5),ylim = c(100,200),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), A1,type = "l",col = "#006600", xlim = c(0.5,4.5),ylim = c(100,200),lwd = "2", axes = F, ann = F)
+
+{plot(c(1:4), D1,type = "l", xlim = c(0.5,4.5),ylim = c(0,15),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,15))
+  title('계절별 단일로 터널안 사망자수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.8, 
+         text.col = "black")
+}
+par(new = T)
+plot(c(1:4), F1,type = "l",col = "red", xlim = c(0.5,4.5),ylim = c(0,15),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), G1,type = "l",col = "blue", xlim = c(0.5,4.5),ylim = c(0,15),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), H1,type = "l",col = "#006600", xlim = c(0.5,4.5),ylim = c(0,15),lwd = "2", axes = F, ann = F)
+```
+### 여름 발생건수 2016년 최저,2015년 최고
+     
+
+
+
+
+
+##계절별 단일로 횡단보도 상 사고 발생건수,사망자수 그래프
+```{r, echo=FALSE}
+{plot(c(1:4), Z2,type = "l", xlim = c(0.5,4.5),ylim = c(1300,1800),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,700))
+  title('계절별 단일로 횡단보도 상 사고발생건수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.6, 
+         text.col = "black", 
+         horiz = F)}
+par(new = T)
+plot(c(1:4), B2,type = "l",col = "red", xlim = c(0.5,4.5),ylim = c(1300,1800),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), X2,type = "l",col = "blue", xlim = c(0.5,4.5),ylim = c(1300,1800),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), A2,type = "l",col = "#006600", xlim = c(0.5,4.5),ylim = c(1300,1800),lwd = "2", axes = F, ann = F)
+
+{plot(c(1:4), D2,type = "l", xlim = c(0.5,4.5), ylim = c(20,65),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,70))
+  title('계절별 단일로 횡단보도 상 사망자수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.6, 
+         text.col = "black")
+}
+par(new = T)
+plot(c(1:4), F2,type = "l",col = "red", xlim = c(0.5,4.5), ylim = c(20,65),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), G2,type = "l",col = "blue", xlim = c(0.5,4.5), ylim = c(20,65),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), H2,type = "l",col = "#006600", xlim = c(0.5,4.5), ylim = c(20,65),lwd = "2", axes = F, ann = F)
+```
+###모든 연도가 여름에 사고발생건수와사망자수가 낮고,가을에 사고발생건수와 사망자수가 높다.
+
+
+
+
+
+
+
+##계절별 횡단보도 부근 사고 발생건수,사망자수 그래프
+```{r, echo=FALSE}
+{plot(c(1:4), Z3,type = "l", xlim = c(0.5,4.5),ylim = c(400,650),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,700))
+  title('계절별 횡단보도 부근 사고발생건수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.8, 
+         text.col = "black", 
+         horiz = F)}
+par(new = T)
+plot(c(1:4), B3,type = "l",col = "red", xlim = c(0.5,4.5),ylim = c(400,650),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), X3,type = "l",col = "blue", xlim = c(0.5,4.5),ylim = c(400,650),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), A3,type = "l",col = "#006600", xlim = c(0.5,4.5),ylim = c(400,650),lwd = "2", axes = F, ann = F)
+
+{plot(c(1:4), D3,type = "l", xlim = c(0.5,4.5), ylim = c(3,20),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,20))
+  title('계절별 단일로 횡단보도 부근 사망자수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.6, 
+         text.col = "black")
+}
+par(new = T)
+plot(c(1:4), F3,type = "l",col = "red", xlim = c(0.5,4.5), ylim = c(3,20),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), G3,type = "l",col = "blue", xlim = c(0.5,4.5), ylim = c(3,20),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), H3,type = "l",col = "#006600", xlim = c(0.5,4.5), ylim = c(3,20),lwd = "2", axes = F, ann = F)
+```
+###2013년 여름에 사고발생건수가 제일 높고 사망자수도 제일 높다.
+   2016년 가을에 사고발생건수가 제일 낮지만 사망자수는 제일 높다.
+   모든연도가 다른계절들보다 봄에 발생건수가 높다.
+
+
+
+
+
+
+
+
+##계절별 교량 위 사고 발생건수,사망자수 그래프
+```{r, echo=FALSE}
+{plot(c(1:4), Z4,type = "l", xlim = c(0.5,4.5),ylim = c(250,350),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,400))
+  title('계절별 교량 위 사고발생건수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.6, 
+         text.col = "black", 
+         horiz = F)}
+par(new = T)
+plot(c(1:4), B4,type = "l",col = "red", xlim = c(0.5,4.5),ylim = c(250,350),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), X4,type = "l",col = "blue", xlim = c(0.5,4.5),ylim = c(250,350),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), A4,type = "l",col = "#006600", xlim = c(0.5,4.5),ylim = c(250,350),lwd = "2", axes = F, ann = F)
+
+{plot(c(1:4), D4,type = "l", xlim = c(0.5,4.5), ylim = c(5,20),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(5,20))
+  title('계절별 단일로 교량 위 사망자수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.6, 
+         text.col = "black")
+}
+par(new = T)
+plot(c(1:4), F4,type = "l",col = "red", xlim = c(0.5,4.5), ylim = c(5,20),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), G4,type = "l",col = "blue", xlim = c(0.5,4.5), ylim = c(5,20),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), H4,type = "l",col = "#006600", xlim = c(0.5,4.5), ylim = c(5,20),lwd = "2", axes = F, ann = F)
+```
+###모든연도가 다른 계절들에 비해 여름에 발생건수가 낮고 가을에 발생건수가 높다.
+
+
+
+
+
+
+
+
+
+
+##계절별 고가도로 위 사고 발생건수,사망자수 그래프
+```{r, echo=FALSE}
+{plot(c(1:4), Z5,type = "l", xlim = c(0.5,4.5),ylim = c(70,150),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,200))
+  title('계절별 고가도로 위 사고발생건수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.6, 
+         text.col = "black", 
+         horiz = F)}
+par(new = T)
+plot(c(1:4), B5,type = "l",col = "red", xlim = c(0.5,4.5),ylim = c(70,150),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), X5,type = "l",col = "blue", xlim = c(0.5,4.5),ylim = c(70,150),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), A5,type = "l",col = "#006600", xlim = c(0.5,4.5),ylim = c(70,150),lwd = "2", axes = F, ann = F)
+
+{plot(c(1:4), D5,type = "l", xlim = c(0.5,4.5),ylim = c(0,10),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,10))
+  title('계절별 단일로 고가도로 위 사망자수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.6, 
+         text.col = "black")
+}
+par(new = T)
+plot(c(1:4), F5,type = "l",col = "red", xlim = c(0.5,4.5),ylim = c(0,10),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), G5,type = "l",col = "blue", xlim = c(0.5,4.5),ylim = c(0,10),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), H5,type = "l",col = "#006600", xlim = c(0.5,4.5),ylim = c(0,10),lwd = "2", axes = F, ann = F)
+```
+
+
+
+
+
+
+
+
+
+
+
+##계절별 지하차도.도로.내 사고 발생건수,사망자수 그래프
+```{r, echo=FALSE}
+{plot(c(1:4), Z6,type = "l", xlim = c(0.5,4.5),ylim = c(50,78),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,100))
+  title('계절별 지하차도.도로.내 사고발생건수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.6, 
+         text.col = "black", 
+         horiz = F)}
+par(new = T)
+plot(c(1:4), B6,type = "l",col = "red", xlim = c(0.5,4.5),ylim = c(50,78),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), X6,type = "l",col = "blue", xlim = c(0.5,4.5),ylim = c(50,78),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), A6,type = "l",col = "#006600", xlim = c(0.5,4.5),ylim = c(50,78),lwd = "2", axes = F, ann = F)
+
+{plot(c(1:4), D6,type = "l", xlim = c(0.5,4.5),ylim = c(0,7),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,7))
+  title('계절별 단일로 지하차도.도로.내 사망자수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.6, 
+         text.col = "black")
+}
+par(new = T)
+plot(c(1:4), F6,type = "l",col = "red", xlim = c(0.5,4.5), ylim = c(0,7),lwd = "2",axes = F, ann = F)
+par(new = T)
+plot(c(1:4), G6,type = "l",col = "blue", xlim = c(0.5,4.5), ylim = c(0,7),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), H6,type = "l",col = "#006600", xlim = c(0.5,4.5), ylim = c(0,7),lwd = "2",axes = F, ann = F)
+```
+###2016년 여름에 발생건수가 제일 낮지만 사망자수는 2015년과 같은 수치로 제일 높다.
+
+
+
+
+
+
+
+##계절별 교차로 내 사고 발생건수,사망자수 그래프
+```{r, echo=FALSE}
+X8
+{plot(c(1:4), Z8,type = "l", xlim = c(0.5,4.5),ylim = c(12500,18500),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,20000))
+  title('계절별 교차로 내 사고발생건수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.8, 
+         text.col = "black", 
+         horiz = F)}
+par(new = T)
+plot(c(1:4), B8,type = "l",col = "red", xlim = c(0.5,4.5),ylim = c(12500,18500),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), X8,type = "l",col = "blue", xlim = c(0.5,4.5),ylim = c(12500,18500),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), A8,type = "l",col = "#006600", xlim = c(0.5,4.5),ylim = c(12500,18500),lwd = "2", axes = F, ann = F)
+
+
+{plot(c(1:4), D8,type = "l", xlim = c(0.5,4.5), ylim = c(150,300),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(150,300))
+  title('계절별 교차로 내 사망자수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.8, 
+         text.col = "black")
+}
+par(new = T)
+plot(c(1:4), F8,type = "l",col = "red", xlim = c(0.5,4.5), ylim = c(150,300),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), G8,type = "l",col = "blue", xlim = c(0.5,4.5), ylim = c(150,300),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), H8,type = "l",col = "#006600", xlim = c(0.5,4.5), ylim = c(150,300),lwd = "2", axes = F, ann = F)
+```
+###사고 발생건수는 모든연도에서 비슷한 비율로 상승,하강한다.
+   사고 발생건수에 비해 2013년 여름에 사망자수가 제일 높다.
+   
+
+
+
+
+
+
+
+
+
+
+##계절별 교차로 부근 사고 발생건수,사망자수 그래프
+```{r, echo=FALSE}
+{plot(c(1:4), Z9,type = "l", xlim = c(0.5,4.5),ylim = c(8000,10000),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(0,10000))
+  title('계절별 교차로 부근 사고발생건수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.8, 
+         text.col = "black", 
+         horiz = F)}
+par(new = T)
+plot(c(1:4), B9,type = "l",col = "red", xlim = c(0.5,4.5),ylim = c(8000,10000),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), X9,type = "l",col = "blue", xlim = c(0.5,4.5),ylim = c(8000,10000),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), A9,type = "l",col = "#006600", xlim = c(0.5,4.5),ylim = c(8000,10000),lwd = "2", axes = F, ann = F)
+
+{plot(c(1:4), D9,type = "l", xlim = c(0.5,4.5), ylim = c(90,170),lwd = "2", axes = F, ann = F)
+  axis(1, at = 1:4, lab = c("봄","여름","가을","겨울"))
+  axis(2, ylim = c(90,170))
+  title('계절별 교차로 부근 사망자수',font.main = 2)
+  legend("topright", 
+         legend = c("2013년", "2014년","2015년","2016년"), 
+         col = c("1","red","blue","#006600"), 
+         pch = c(16), 
+         bty = "o", 
+         pt.cex = 1, 
+         cex = 0.6, 
+         text.col = "black")
+}
+par(new = T)
+plot(c(1:4), F9,type = "l",col = "red", xlim = c(0.5,4.5), ylim = c(90,170), lwd = "2",axes = F, ann = F)
+par(new = T)
+plot(c(1:4), G9,type = "l",col = "blue", xlim = c(0.5,4.5), ylim = c(90,170),lwd = "2", axes = F, ann = F)
+par(new = T)
+plot(c(1:4), H9,type = "l",col = "#006600", xlim = c(0.5,4.5), ylim = c(90,170),lwd = "2", axes = F, ann = F)
+```
+###사고 발생건수는 모든연도에서 비슷한 비율로 상승,하강한다.
+   사망자수는 2015년이 사건발생건수에 비해 낮게 나타났다.

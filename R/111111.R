@@ -1,0 +1,25 @@
+RS2 <- read.csv("C:/Users/정경현/Desktop/빅기정 기말/교통사고.csv")
+Y1 <- RS$봄
+Y2 <- RS$여름
+Y3 <- RS$가을
+Y4 <- RS$겨울
+median(SX)
+mean(SX)
+var(SX)
+sd(SX)
+median(X1)
+mean(X1)
+var(X1)
+sd(X1)
+median(X2)
+mean(X2)
+var(X2)
+sd(X2)
+median(X3)
+mean(X3)
+var(X3)
+sd(X3)
+median(X4)
+mean(X4)
+var(X4)
+sd(X4)
